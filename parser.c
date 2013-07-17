@@ -4,58 +4,74 @@
 
 #include "parser.h"
 
-int argslist_parse(char *schema, ArgsList **argslist,
-                   char **stdinArgs, int numArgs)
+int argslist_parse(ArgsList **argslist, char **stdinArgs, int numArgs)
 {
-    int i, rc, rc2 = 0;
+    int i = 0, rc = 0, rc2 = 0;
     ArgsList *tmp_argslist = NULL;
-    
+
     ERR_IF(*argslist != NULL);
     ERR_IF(argslist == NULL);
     
-    printf("Hey, world! %s\n", stdinArgs[1]);
-
-    // Initialize argslist struct by allocating space and assgning values.
-
+    // Allocate space and assign values to argslist.
     tmp_argslist = malloc(sizeof(ArgsList));
     ERR_IF( !tmp_argslist );
+    
+    // Initialize this to false as default.
+    tmp_argslist->l = 0;
 
-    tmp_argslist->l = 0;    // Initialize this to false as default.
-
+    // Assign values according to schema
     for(i=0; i < numArgs; i++)
     {
         char *currArg = stdinArgs[i];
         if( strcmp(currArg, "-l") == 0 )
         {
-            tmp_argslist->l = 1;
-            printf("Tmp_args->l = %d\n", tmp_argslist->l);
+            if(tmp_argslist->l == 0)
+                tmp_argslist->l = 1;
         }
         else if( strcmp(currArg, "-p") == 0 )
         {
-            printf("stdinArgs[%d] = %s\n", i+1, stdinArgs[i+1]);
+            if( tmp_argslist->p )
+            {
+                printf("ERROR: Already set port!\n");
+                rc = -1;
+                break;
+            }
             i++;
             tmp_argslist->p = atoi(stdinArgs[i]);
-            printf("Tmp_args->p = %d\n", tmp_argslist->p);
         }
         else if( strcmp(currArg, "-d") == 0 )
         {
-            printf("stdinArgs[%d] = %s\n", i+1, stdinArgs[i+1]);
+            if(tmp_argslist->d != NULL)
+            {
+                printf("ERROR: Already set directory!\n");
+                rc = -1;
+                break;
+            }
             i++;
             tmp_argslist->d = strdup(stdinArgs[i]);
-            printf("Tmp_args->d = %s\n", tmp_argslist->d);
         }
         continue;
     }
 
-    // Pass back
-    *argslist = tmp_argslist;
+    // Error handling
+    if( rc != 0 )
+    {
+        argslist_free(tmp_argslist);
+    }
+    else
+    {
+        // Pass back
+        //  -Don't need to free tmp_argslist explicitly:
+        //      freeing argslist will take care of it.
+        *argslist = tmp_argslist;
+    }
 
     return rc;
 }
 
 void argslist_print(ArgsList *argslist)
 {
-    int rc, rc2 = 0;
+    int rc = 0, rc2 = 0;
     char *logBool = NULL;
 
     ERR_IF(argslist == NULL);
@@ -64,8 +80,7 @@ void argslist_print(ArgsList *argslist)
     printf("Logging: %s\n", logBool);
     printf("Port: %d\n", argslist->p);
     printf("Directory: %s\n", argslist->d);
-
-    // Print list of strings and list of ints
+    // TODO: Print list of strings and list of ints
 }
 
 void argslist_free(ArgsList *argslist)
