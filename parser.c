@@ -18,6 +18,7 @@ int argslist_parse(ArgsList **argslist, char **stdinArgs, int numArgs)
     
     // Initialize this to false as default.
     tmp_argslist->l = 0;
+    tmp_argslist->p = -1;
 
     // Assign values according to schema
     for(i=0; i < numArgs; i++)
@@ -30,7 +31,7 @@ int argslist_parse(ArgsList **argslist, char **stdinArgs, int numArgs)
         }
         else if( strcmp(currArg, "-p") == 0 )
         {
-            if( tmp_argslist->p )
+            if( tmp_argslist->p != -1 )
             {
                 printf("ERROR: Already set port!\n");
                 rc = -1;
@@ -60,6 +61,9 @@ int argslist_parse(ArgsList **argslist, char **stdinArgs, int numArgs)
     }
     else
     {
+        if(tmp_argslist->d == NULL)
+            tmp_argslist->d = "Not Given";
+
         // Pass back
         //  -Don't need to free tmp_argslist explicitly:
         //      freeing argslist will take care of it.
@@ -86,7 +90,9 @@ void argslist_print(ArgsList *argslist)
 void argslist_free(ArgsList *argslist)
 {
     // Free all allocated space
-    free(argslist->d);
+
+    if(argslist->d != "Not Given")
+        free(argslist->d);
     argslist->d = NULL;
     free(argslist);
 }
