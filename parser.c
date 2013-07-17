@@ -90,7 +90,6 @@ void argslist_print(ArgsList *argslist)
 void argslist_free(ArgsList *argslist)
 {
     // Free all allocated space
-
     if(argslist->d != "Not Given")
         free(argslist->d);
     argslist->d = NULL;
