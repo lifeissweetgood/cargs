@@ -9,7 +9,7 @@ typedef struct SCHEMA_ARGS {
     char *d;    // Directory
 
     /* TODO: enhance program to include this */
-    //char **g;   // List of strings
+    char g[10];
     //int **n;    // List of integers
 } ArgsList;
 

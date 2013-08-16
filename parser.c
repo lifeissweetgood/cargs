@@ -6,7 +6,7 @@
 
 int argslist_parse(ArgsList **argslist, char **stdinArgs, int numArgs)
 {
-    int i = 0, rc = 0, rc2 = 0;
+    int i = 0, j = 0, rc = 0, rc2 = 0;
     ArgsList *tmp_argslist = NULL;
 
     ERR_IF(*argslist != NULL);
@@ -50,6 +50,21 @@ int argslist_parse(ArgsList **argslist, char **stdinArgs, int numArgs)
             }
             i++;
             tmp_argslist->d = strdup(stdinArgs[i]);
+        }
+        else if( strcmp(currArg, "-g") == 0 )
+        {
+            i++;
+            char *nextArg = stdinArgs[i];
+            while( (j < 10) && (*nextArg != '\0') )
+            {
+                if( *nextArg != ',' )
+                {
+                    tmp_argslist->g[j] = *nextArg;
+                    printf("List %c\n", tmp_argslist->g[j]); 
+                    j++;
+                }
+                *nextArg++;
+            }
         }
         continue;
     }
