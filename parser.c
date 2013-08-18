@@ -21,6 +21,11 @@ int argslist_parse(ArgsList **argslist, char **stdinArgs, int numArgs)
     tmp_argslist->l = 0;
     tmp_argslist->p = -1;
 
+    // Preset arrays
+    memset(&tmp_argslist->s, 0, 10);
+    memset(&tmp_argslist->g, '\0', 10);
+    memset(&tmp_argslist->n, '\0', 10);
+
     // Assign values according to schema
     for(i=0; i < numArgs; i++)
     {
@@ -61,7 +66,6 @@ int argslist_parse(ArgsList **argslist, char **stdinArgs, int numArgs)
                 if( *nextArg != ',' )
                 {
                     tmp_argslist->g[j] = *nextArg;
-                    printf("List %c\n", tmp_argslist->g[j]); 
                     j++;
                 }
                 *nextArg++;
@@ -76,12 +80,10 @@ int argslist_parse(ArgsList **argslist, char **stdinArgs, int numArgs)
                 if( (strcmp(currArg, "-n") == 0) )
                 {
                     tmp_argslist->n[j] = atoi(nextArg);
-                    printf("NumList %d\n", tmp_argslist->n[j]);
                 }
                 else if( (strcmp(currArg, "-s") == 0) )
                 {
                     tmp_argslist->s[j] = nextArg;
-                    printf("StrList %s\n", tmp_argslist->s[j]);
                 }
                 j++;
                 nextArg = strtok(NULL, ",");
@@ -111,7 +113,7 @@ int argslist_parse(ArgsList **argslist, char **stdinArgs, int numArgs)
 
 void argslist_print(ArgsList *argslist)
 {
-    int rc = 0, rc2 = 0;
+    int i, rc = 0, rc2 = 0;
     char *logBool = NULL;
 
     ERR_IF(argslist == NULL);
@@ -120,7 +122,24 @@ void argslist_print(ArgsList *argslist)
     printf("Logging: %s\n", logBool);
     printf("Port: %d\n", argslist->p);
     printf("Directory: %s\n", argslist->d);
-    // TODO: Print list of strings and list of ints
+    printf("StrList:\n");
+    for( i = 0; i < 10; i++ )
+    {
+        if( argslist->s[i] != 0 )
+            printf("\t%s\n", argslist->s[i]);
+    }
+    printf("CharList:\n");
+    for( i = 0; i < 10; i++ )
+    {
+        if( argslist->g[i] != '\0' )
+            printf("\t%c\n", argslist->g[i]);
+    }
+    printf("NumList:\n");
+    for( i = 0; i < 10; i++ )
+    {
+        if( argslist->n[i] != '\0' )
+            printf("\t%d\n", argslist->n[i]);
+    }
 }
 
 void argslist_free(ArgsList *argslist)
