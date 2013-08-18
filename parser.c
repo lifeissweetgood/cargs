@@ -7,6 +7,7 @@
 int argslist_parse(ArgsList **argslist, char **stdinArgs, int numArgs)
 {
     int i = 0, j = 0, rc = 0, rc2 = 0;
+    char *nextArg = NULL;
     ArgsList *tmp_argslist = NULL;
 
     ERR_IF(*argslist != NULL);
@@ -54,7 +55,7 @@ int argslist_parse(ArgsList **argslist, char **stdinArgs, int numArgs)
         else if( strcmp(currArg, "-g") == 0 )
         {
             i++;
-            char *nextArg = stdinArgs[i];
+            nextArg = stdinArgs[i];
             while( (j < 10) && (*nextArg != '\0') )
             {
                 if( *nextArg != ',' )
@@ -64,6 +65,26 @@ int argslist_parse(ArgsList **argslist, char **stdinArgs, int numArgs)
                     j++;
                 }
                 *nextArg++;
+            }
+        }
+        else if( (strcmp(currArg, "-n") == 0) || (strcmp(currArg, "-s") == 0) )
+        {
+            j = 0;
+            nextArg = strtok(stdinArgs[++i], ",");
+            while( (j < 10) && (nextArg != NULL) )
+            {
+                if( (strcmp(currArg, "-n") == 0) )
+                {
+                    tmp_argslist->n[j] = atoi(nextArg);
+                    printf("NumList %d\n", tmp_argslist->n[j]);
+                }
+                else if( (strcmp(currArg, "-s") == 0) )
+                {
+                    tmp_argslist->s[j] = nextArg;
+                    printf("StrList %s\n", tmp_argslist->s[j]);
+                }
+                j++;
+                nextArg = strtok(NULL, ",");
             }
         }
         continue;

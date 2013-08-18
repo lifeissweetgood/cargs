@@ -4,13 +4,14 @@
            __FUNCTION__, rc2); exit(-1); }
 
 typedef struct SCHEMA_ARGS {
-    int l;     // Logging, can only be 0 or 1
-    int p;      // Port
-    char *d;    // Directory
+    int l;          // Logging, can only be 0 or 1
+    int p;          // Port
+    char *d;        // Directory
 
-    /* TODO: enhance program to include this */
-    char g[10];
-    //int **n;    // List of integers
+    /* TODO: enhance program to make these lists dynamic */
+    char *s[10];    // List of strings
+    char g[10];     // List of chars
+    int n[10];      // List of ints
 } ArgsList;
 
 int argslist_parse(ArgsList **argslist, char **stdinArgs, int numArgs);
